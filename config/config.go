@@ -16,6 +16,7 @@ type Db struct {
 	Host     string
 	User     string
 	Password string
+	Keyspace string
 }
 
 var once sync.Once
@@ -33,6 +34,7 @@ func InitConfig() *Config {
 				Host:     os.Getenv("DB_HOST"),
 				User:     os.Getenv("DB_USER"),
 				Password: os.Getenv("DB_PASS"),
+				Keyspace: os.Getenv("DB_KEYSPACE"),
 			},
 		}
 	})
