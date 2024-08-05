@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  app:
+    build: .
+    image: my-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+    environment:
+      - PORT=8080
+
   scylla:
     image: scylladb/scylla
     container_name: scylla

@@ -4,13 +4,13 @@ Este é um exemplo de aplicativo utilizando Golang e ScyllaDB para persistência
 
 ### Setup
 
-Para executar localmente, suba o banco através do docker-compose:
+Para executar localmente, execute o docker-compose:
 
 ```
 docker-compose up
 ```
 
-Em seguida, acesse cqlsh para criar keyspace e a tabela:
+Dois containers serão criados, um para my-app e do banco de dados. Em seguida, acesse cqlsh para criar keyspace e a tabela deste exemplo:
 
 ```
 docker exec -it scylla cqlsh
@@ -26,9 +26,9 @@ cqlsh> CREATE TABLE my_company.drivers (id uuid, cnh text, license_plate text, n
 
 Para este momento, não há persistência do volume do banco. Assim, caso o container seja apagado, todos os dados eventualmente salvos também serão perdidos.
 
-Para rodar a API, execute:
+A API estará rodando na porta 8080:
 ```
-go run main.go
+http://localhost:8080/v1/ping
 ```
 
 ### Documentação
@@ -46,6 +46,6 @@ Devido ao tempo, mantive como objetivo para evoluir este exemplo:
 * Adicionar migrate
 * Persistir volume do banco de dados
 * Validação de dados de entrada
-* Rodar aplicação com docker-compose
+* ~~Rodar aplicação com docker-compose~~
 * Implementar testes com K6 para avaliar desempenho
 * Implementar testes unitários
