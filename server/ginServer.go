@@ -2,7 +2,10 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vinaocruz/go-scylla-example/database"
+	"github.com/vinaocruz/go-scylla-example/docs"
 	"github.com/vinaocruz/go-scylla-example/infrastructure/handlers"
 )
 
@@ -18,22 +21,33 @@ func NewGinServer(db *database.Database) *GinServer {
 
 func (s *GinServer) Start() {
 	r := gin.Default()
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	driversRouters := r.Group("/drivers")
+	driversRouters := r.Group("/v1/drivers")
 	{
 		handlers.NewDriverHandler(s.db, driversRouters)
 	}
-
-	vehiclesRouters := r.Group("/drivers/:cnh/vehicles")
+	vehiclesRouters := r.Group("/v1/drivers/:cnh/vehicles")
 	{
 		handlers.NewVehicleHandler(s.db, vehiclesRouters)
 	}
 
+	r.GET("/v1/ping", s.ping)
+
+	docs.SwaggerInfo.BasePath = "/v1"
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
 	r.Run()
+}
+
+// PingExample godoc
+// @Summary ping example
+// @Description do ping
+// @Tags Health Check
+// @Accept json
+// @Produce json
+// @Success 200 {string} pong
+// @Router /ping [get]
+func (s *GinServer) ping(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
+	})
 }

@@ -1,0 +1,298 @@
+definitions:
+  entities.Driver:
+    properties:
+      cnh:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      license_plate:
+        type: string
+      model:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /drivers:
+    get:
+      consumes:
+      - application/json
+      description: Busca a lista de todos motoristas e seus veiculos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Driver'
+            type: array
+        "500":
+          description: failed to list all
+          schema:
+            type: string
+      summary: lista motoristas
+      tags:
+      - Motoristas
+    post:
+      consumes:
+      - application/json
+      description: Este endpoint permite adicionar um novo motorista e seu veiculo
+      parameters:
+      - description: Numero de CNH
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      - description: Nome do motorista
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: Número da plata
+        in: body
+        name: license_plate
+        required: true
+        schema:
+          type: string
+      - description: Modelo do veiculo
+        in: body
+        name: model
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Driver'
+        "400":
+          description: failed to bind json
+          schema:
+            type: string
+        "500":
+          description: failed to store
+          schema:
+            type: string
+      summary: cria novo motorista e veiculo
+      tags:
+      - Motoristas
+  /drivers/{cnh}:
+    delete:
+      consumes:
+      - application/json
+      description: Este endpoint remove dados do motorista e seus veiculos
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "500":
+          description: failed to delete
+          schema:
+            type: string
+      summary: remove motorista
+      tags:
+      - Motoristas
+    get:
+      consumes:
+      - application/json
+      description: Este endpoint permite buscar dados e veiculos de um motorista identificado
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Driver'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: buscar um motorista
+      tags:
+      - Motoristas
+    put:
+      consumes:
+      - application/json
+      description: Este endpoint permite alterar dados do motorista
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Nome do motorista
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Driver'
+            type: array
+        "400":
+          description: failed to bind json
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: failed to update
+          schema:
+            type: string
+      summary: edita motorista
+      tags:
+      - Motoristas
+  /drivers/{cnh}/vehicles/{license_plate}:
+    delete:
+      consumes:
+      - application/json
+      description: Este endpoint remove veiculo especifico de um motorista
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Número da Placa do Veiculo
+        in: path
+        name: license_plate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: failed to delete
+          schema:
+            type: string
+      summary: remove veiculo
+      tags:
+      - Veiculos
+    get:
+      consumes:
+      - application/json
+      description: Este endpoint busca um veiculo especifico de um motorista através
+        de sua placa
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Número da Placa do Veiculo
+        in: path
+        name: license_plate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Driver'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: recupera veiculo
+      tags:
+      - Veiculos
+    put:
+      consumes:
+      - application/json
+      description: Este endpoint permite editar dados de um veiculo especifico de
+        um motorista
+      parameters:
+      - description: Número de CNH
+        in: path
+        name: cnh
+        required: true
+        type: string
+      - description: Número da Placa do Veiculo
+        in: path
+        name: license_plate
+        required: true
+        type: string
+      - description: Modelo do veiculo
+        in: body
+        name: model
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Driver'
+        "400":
+          description: failed to bind json
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: failed to update
+          schema:
+            type: string
+      summary: edita veiculo
+      tags:
+      - Veiculos
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ping example
+      tags:
+      - Health Check
+swagger: "2.0"

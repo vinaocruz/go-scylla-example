@@ -29,6 +29,14 @@ func NewDriverHandler(db *database.Database, router *gin.RouterGroup) {
 	router.DELETE("/:cnh", handler.DeleteDriver)
 }
 
+// @Summary lista motoristas
+// @Description Busca a lista de todos motoristas e seus veiculos
+// @Tags Motoristas
+// @Accept json
+// @Produce json
+// @Success 200 {array} entities.Driver
+// @failure 500 {string} string "failed to list all"
+// @Router /drivers [get]
 func (handler *DriverHandler) ListDrivers(c *gin.Context) {
 	listAll, err := handler.repository.ListAll()
 
@@ -39,16 +47,27 @@ func (handler *DriverHandler) ListDrivers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": listAll,
-	})
+	c.JSON(http.StatusOK, listAll)
 }
 
+// @Summary cria novo motorista e veiculo
+// @Description Este endpoint permite adicionar um novo motorista e seu veiculo
+// @Tags Motoristas
+// @Accept json
+// @Produce json
+// @Param data body string true "Numero de CNH"
+// @Param name body string true "Nome do motorista"
+// @Param license_plate body string true "Número da plata"
+// @Param model body string true "Modelo do veiculo"
+// @Success 200 {object} entities.Driver
+// @failure 400 {string} string "failed to bind json"
+// @failure 500 {string} string "failed to store"
+// @Router /drivers [post]
 func (handler *DriverHandler) CreateDriver(c *gin.Context) {
 	var driver entities.Driver
 
 	if err := c.ShouldBindJSON(&driver); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "failed to bind json",
 		})
 		return
@@ -66,11 +85,18 @@ func (handler *DriverHandler) CreateDriver(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": driver,
-	})
+	c.JSON(http.StatusOK, driver)
 }
 
+// @Summary buscar um motorista
+// @Description Este endpoint permite buscar dados e veiculos de um motorista identificado
+// @Tags Motoristas
+// @Accept json
+// @Produce json
+// @Success 200 {array} entities.Driver
+// @failure 404 {string} string
+// @Router /drivers/{cnh} [get]
+// @Param cnh path string true "Número de CNH"
 func (handler *DriverHandler) GetDriver(c *gin.Context) {
 	drivers, err := handler.repository.Load(c.Param("cnh"))
 	if err != nil {
@@ -80,11 +106,21 @@ func (handler *DriverHandler) GetDriver(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": drivers,
-	})
+	c.JSON(http.StatusOK, drivers)
 }
 
+// @Summary edita motorista
+// @Description Este endpoint permite alterar dados do motorista
+// @Tags Motoristas
+// @Accept json
+// @Produce json
+// @Success 200 {array} entities.Driver
+// @failure 404 {string} string
+// @failure 400 {string} string "failed to bind json"
+// @failure 500 {string} string "failed to update"
+// @Router /drivers/{cnh} [put]
+// @Param cnh path string true "Número de CNH"
+// @Param name body string true "Nome do motorista"
 func (handler *DriverHandler) UpdateDriver(c *gin.Context) {
 	cnh := c.Param("cnh")
 
@@ -99,7 +135,7 @@ func (handler *DriverHandler) UpdateDriver(c *gin.Context) {
 	var people entities.People
 
 	if err := c.ShouldBindJSON(&people); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "failed to bind json",
 		})
 		return
@@ -117,11 +153,18 @@ func (handler *DriverHandler) UpdateDriver(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"data": drivers,
-	})
+	c.JSON(http.StatusOK, drivers)
 }
 
+// @Summary remove motorista
+// @Description Este endpoint remove dados do motorista e seus veiculos
+// @Tags Motoristas
+// @Accept json
+// @Produce json
+// @Success 204
+// @failure 500 {string} string "failed to delete"
+// @Router /drivers/{cnh} [delete]
+// @Param cnh path string true "Número de CNH"
 func (handler *DriverHandler) DeleteDriver(c *gin.Context) {
 	err := handler.repository.Delete(c.Param("cnh"))
 	if err != nil {
